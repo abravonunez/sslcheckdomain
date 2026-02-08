@@ -1,0 +1,2 @@
+# sslcheckdomain
+ssl check domains 
