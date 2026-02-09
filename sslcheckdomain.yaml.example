@@ -1,0 +1,17 @@
+# Example configuration file for sslcheckdomain
+# Copy this file to ~/.config/sslcheckdomain.yaml or ./sslcheckdomain.yaml
+
+# DNS Provider (cloudflare, route53)
+provider: cloudflare
+
+# HTTP timeout in seconds
+timeout: 10
+
+# Number of concurrent SSL checks
+concurrent: 10
+
+# Warning threshold in days
+threshold: 30
+
+# Output format (table, json, prometheus)
+output: table

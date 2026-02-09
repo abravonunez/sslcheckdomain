@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  sslcheck:
+    image: sslcheckdomain/sslcheckdomain:latest
+    container_name: sslcheckdomain
+    environment:
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - SSL_CHECK_TIMEOUT=10
+      - SSL_CHECK_CONCURRENT=15
+      - SSL_CHECK_THRESHOLD=30
+    command: ["--output", "json"]
+    restart: "no"
+
+  # Example: Run as cron job
+  sslcheck-cron:
+    image: sslcheckdomain/sslcheckdomain:latest
+    container_name: sslcheckdomain-cron
+    environment:
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+    volumes:
+      - ./logs:/logs
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "0 9 * * * /usr/local/bin/sslcheckdomain --output json > /logs/ssl-check.json 2>&1" | crontab -
+        crond -f
+    restart: always
