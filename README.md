@@ -19,13 +19,34 @@ A robust CLI tool written in Go for monitoring SSL certificate expiration across
 
 ## Installation
 
+### Homebrew (macOS/Linux)
+
+```bash
+brew tap abravonunez/tap
+brew install sslcheckdomain
+```
+
+### Linux Packages
+
+**Debian/Ubuntu (.deb):**
+```bash
+wget https://github.com/abravonunez/sslcheckdomain/releases/latest/download/sslcheckdomain_<version>_amd64.deb
+sudo dpkg -i sslcheckdomain_<version>_amd64.deb
+```
+
+**RedHat/Fedora (.rpm):**
+```bash
+wget https://github.com/abravonunez/sslcheckdomain/releases/latest/download/sslcheckdomain_<version>_amd64.rpm
+sudo rpm -i sslcheckdomain_<version>_amd64.rpm
+```
+
 ### Binary Release
 
 Download the latest release for your platform:
 
 ```bash
 # macOS (Apple Silicon)
-curl -L https://github.com/yourusername/sslcheckdomain/releases/latest/download/sslcheckdomain-darwin-arm64 -o sslcheckdomain
+curl -L https://github.com/abravonunez/sslcheckdomain/releases/latest/download/sslcheckdomain-darwin-arm64 -o sslcheckdomain
 chmod +x sslcheckdomain
 sudo mv sslcheckdomain /usr/local/bin/
 
