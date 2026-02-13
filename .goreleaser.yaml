@@ -1,0 +1,81 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+version: 2
+
+project_name: sslcheckdomain
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: sslcheckdomain
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    main: ./cmd/sslcheckdomain
+    binary: sslcheckdomain
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+
+archives:
+  - formats:
+      - tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+
+brews:
+  - name: sslcheckdomain
+    repository:
+      owner: abravonunez
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+      branch: "{{ .ProjectName }}-{{ .Version }}"
+      pull_request:
+        enabled: true
+        base: main
+    commit_author:
+      name: goreleaserbot
+      email: bot@goreleaser.com
+    directory: Formula
+    homepage: "https://github.com/abravonunez/sslcheckdomain"
+    description: "SSL certificate checker for domains with multiple output formats"
+    license: "MIT"
+    skip_upload: auto
+    test: |
+      system "#{bin}/sslcheckdomain --version"
+
+nfpms:
+  - id: linux-packages
+    package_name: sslcheckdomain
+    description: "SSL certificate checker for domains with multiple output formats"
+    maintainer: "Alex Bravo <abravonunez@users.noreply.github.com>"
+    homepage: "https://github.com/abravonunez/sslcheckdomain"
+    license: "MIT"
+    bindir: /usr/bin
+    formats:
+      - deb
+      - rpm
