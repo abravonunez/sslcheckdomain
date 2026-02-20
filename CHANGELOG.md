@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/abravonunez/sslcheckdomain/compare/v1.2.0...v1.2.1) (2026-02-20)
+
+
+### Bug Fixes
+
+* **build:** inject version and build time correctly ([#7](https://github.com/abravonunez/sslcheckdomain/issues/7)) ([f268747](https://github.com/abravonunez/sslcheckdomain/commit/f26874712d36e63c123a932afb56534894e51f1e))
+
 ## [1.2.0](https://github.com/abravonunez/sslcheckdomain/compare/v1.1.1...v1.2.0) (2026-02-20)
 
 
