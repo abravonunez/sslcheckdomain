@@ -32,6 +32,7 @@ type Config struct {
 	Zone        string
 	ExpiringIn  int
 	Domains     []string
+	IncludeCNAME bool
 }
 
 // Load loads configuration from environment variables and config file
