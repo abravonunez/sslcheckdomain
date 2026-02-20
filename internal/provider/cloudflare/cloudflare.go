@@ -8,13 +8,24 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 )
 
+// ProviderOptions holds configuration options for the Cloudflare provider
+type ProviderOptions struct {
+	IncludeCNAME bool
+}
+
 // Provider implements the DNSProvider interface for Cloudflare
 type Provider struct {
-	client *cloudflare.API
+	client       *cloudflare.API
+	includeCNAME bool
 }
 
 // New creates a new Cloudflare provider
 func New(apiToken string) (*Provider, error) {
+	return NewWithOptions(apiToken, ProviderOptions{})
+}
+
+// NewWithOptions creates a new Cloudflare provider with options
+func NewWithOptions(apiToken string, opts ProviderOptions) (*Provider, error) {
 	if apiToken == "" {
 		return nil, fmt.Errorf("cloudflare API token is required")
 	}
@@ -25,7 +36,8 @@ func New(apiToken string) (*Provider, error) {
 	}
 
 	return &Provider{
-		client: api,
+		client:       api,
+		includeCNAME: opts.IncludeCNAME,
 	}, nil
 }
 
@@ -93,17 +105,31 @@ func (p *Provider) getSubdomains(ctx context.Context, zoneID, zoneName string) (
 	domainSet := make(map[string]bool)
 
 	for _, record := range records {
-		// Only consider A, AAAA, and CNAME records that point to external resources
-		if record.Type == "A" || record.Type == "AAAA" || record.Type == "CNAME" {
-			// Skip if it's the zone apex
-			if record.Name == zoneName {
-				continue
-			}
+		// Determine which record types to include
+		validType := false
+		if record.Type == "A" || record.Type == "AAAA" {
+			validType = true
+		} else if record.Type == "CNAME" && p.includeCNAME {
+			validType = true
+		}
 
-			// Only include if it's a subdomain and not a wildcard
-			if strings.HasSuffix(record.Name, "."+zoneName) && !strings.Contains(record.Name, "*") {
-				domainSet[record.Name] = true
-			}
+		if !validType {
+			continue
+		}
+
+		// Skip if it's the zone apex
+		if record.Name == zoneName {
+			continue
+		}
+
+		// Skip service records (those starting with underscore)
+		if strings.HasPrefix(record.Name, "_") {
+			continue
+		}
+
+		// Only include if it's a subdomain and not a wildcard
+		if strings.HasSuffix(record.Name, "."+zoneName) && !strings.Contains(record.Name, "*") {
+			domainSet[record.Name] = true
 		}
 	}
 
