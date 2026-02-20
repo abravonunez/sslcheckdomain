@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/abravonunez/sslcheckdomain/compare/v1.1.1...v1.2.0) (2026-02-20)
+
+
+### Features
+
+* add smart DNS filtering for A/AAAA records ([b2df324](https://github.com/abravonunez/sslcheckdomain/commit/b2df32469236cd06e4207afed1fb940e359560f0))
+
 ## [1.1.1](https://github.com/abravonunez/sslcheckdomain/compare/v1.1.0...v1.1.1) (2026-02-13)
 
 
