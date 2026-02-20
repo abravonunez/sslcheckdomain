@@ -33,6 +33,7 @@ var (
 	timeoutFlag     int
 	versionFlag     bool
 	testDomainFlag  string
+	includeCNAMEFlag bool
 )
 
 func main() {
@@ -82,6 +83,7 @@ func init() {
 	rootCmd.Flags().IntVar(&timeoutFlag, "timeout", 0, "HTTP timeout in seconds (default from config)")
 	rootCmd.Flags().BoolVar(&versionFlag, "version", false, "Show version information")
 	rootCmd.Flags().StringVarP(&testDomainFlag, "test", "d", "", "Test a single domain (bypasses provider lookup)")
+	rootCmd.Flags().BoolVar(&includeCNAMEFlag, "include-cname", false, "Include CNAME records in addition to A/AAAA (default: A/AAAA only)")
 }
 
 func run(cmd *cobra.Command, args []string) error {
@@ -120,6 +122,7 @@ func run(cmd *cobra.Command, args []string) error {
 		cfg.Timeout = timeoutFlag
 	}
 	cfg.Verbose = verboseFlag
+	cfg.IncludeCNAME = includeCNAMEFlag
 	cfg.Domains = args
 
 	// Validate configuration (skip provider validation if using --test flag)
@@ -266,7 +269,9 @@ func getDomains(ctx context.Context, cfg *config.Config) ([]string, error) {
 
 	switch cfg.Provider {
 	case "cloudflare":
-		dnsProvider, err = cloudflare.New(cfg.CloudflareToken)
+		dnsProvider, err = cloudflare.NewWithOptions(cfg.CloudflareToken, cloudflare.ProviderOptions{
+			IncludeCNAME: cfg.IncludeCNAME,
+		})
 		if err != nil {
 			return nil, fmt.Errorf("failed to create cloudflare provider: %w", err)
 		}
