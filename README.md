@@ -10,6 +10,7 @@ A robust CLI tool written in Go for monitoring SSL certificate expiration across
 
 - **Multi-Provider Support**: Cloudflare, AWS Route53 (extensible architecture)
 - **Automatic Domain Discovery**: Fetches all domains from your DNS provider
+- **Smart DNS Filtering**: By default checks only A/AAAA records, excludes service records (_acme-challenge, etc.)
 - **Concurrent Checks**: Fast parallel SSL certificate verification
 - **Smart Sorting**: Displays results sorted by expiration date (earliest first)
 - **Rich Output**: Colored terminal output with table formatting
@@ -111,6 +112,7 @@ Flags:
   -c, --concurrent int       Number of concurrent checks (default: 10)
   -v, --verbose             Verbose output
       --timeout int         HTTP timeout in seconds (default: 10)
+      --include-cname       Include CNAME records in addition to A/AAAA (default: A/AAAA only)
       --version             Show version information
   -h, --help                Show help
 ```
@@ -132,6 +134,32 @@ sslcheckdomain -v --concurrent 20
 
 # Check specific zone only
 sslcheckdomain --zone mycompany.com
+
+# Include CNAME records (default: A/AAAA only)
+sslcheckdomain --include-cname
+```
+
+## DNS Record Filtering
+
+By default, `sslcheckdomain` intelligently filters DNS records to avoid common errors:
+
+- **Includes by default**: A and AAAA records (domains with direct IP addresses)
+- **Excludes by default**:
+  - CNAME records (aliases that may not have SSL certificates)
+  - Service records starting with `_` (_acme-challenge, _dmarc, _domainkey, etc.)
+  - Wildcard domains
+  - Zone apex records
+
+**To include CNAME records**, use the `--include-cname` flag. This is useful when:
+- Your CNAME records point to services with valid SSL certificates
+- You want comprehensive coverage of all DNS entries
+
+```bash
+# Default behavior (A/AAAA only)
+sslcheckdomain
+
+# Include CNAME records as well
+sslcheckdomain --include-cname
 ```
 
 ## Configuration
