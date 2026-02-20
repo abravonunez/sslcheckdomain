@@ -20,7 +20,9 @@ builds:
     main: ./cmd/sslcheckdomain
     binary: sslcheckdomain
     ldflags:
-      - -s -w -X main.version={{.Version}}
+      - -s -w
+      - -X main.Version={{.Version}}
+      - -X main.BuildTime={{.Date}}
 
 archives:
   - formats:
