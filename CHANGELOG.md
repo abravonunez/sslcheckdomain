@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/abravonunez/sslcheckdomain/compare/v1.2.1...v1.3.0) (2026-02-23)
+
+
+### Features
+
+* add color theme system with 6 beautiful themes ([#9](https://github.com/abravonunez/sslcheckdomain/issues/9)) ([b598eba](https://github.com/abravonunez/sslcheckdomain/commit/b598ebabd29846f92e73c2854e194613e2e3668f))
+
 ## [1.2.1](https://github.com/abravonunez/sslcheckdomain/compare/v1.2.0...v1.2.1) (2026-02-20)
 
 
