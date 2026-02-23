@@ -7,15 +7,27 @@ import (
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
+	"sslcheckdomain/internal/themes"
 	"sslcheckdomain/pkg/models"
 )
 
 // TableFormatter formats certificate report as a table
-type TableFormatter struct{}
+type TableFormatter struct{
+	theme themes.Theme
+}
 
 // NewTableFormatter creates a new table formatter
 func NewTableFormatter() *TableFormatter {
-	return &TableFormatter{}
+	return &TableFormatter{
+		theme: themes.DefaultTheme,
+	}
+}
+
+// NewTableFormatterWithTheme creates a new table formatter with a specific theme
+func NewTableFormatterWithTheme(themeName string) *TableFormatter {
+	return &TableFormatter{
+		theme: themes.GetTheme(themeName),
+	}
 }
 
 // Format formats the certificate report as a table
@@ -29,8 +41,8 @@ func (f *TableFormatter) Format(report *models.CertificateReport) error {
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 
-	// Custom title with Catppuccin-inspired colors
-	title := text.Colors{text.FgHiCyan}.Sprint("SSL Certificate Expiration Report")
+	// Custom title with theme colors
+	title := text.Colors{f.theme.Title}.Sprint("SSL Certificate Expiration Report")
 	t.SetTitle(title)
 
 	// Set headers
@@ -44,10 +56,10 @@ func (f *TableFormatter) Format(report *models.CertificateReport) error {
 		issuer := f.formatIssuer(cert.Issuer)
 
 		if cert.Error != nil {
-			status = text.Colors{text.FgHiRed}.Sprint("✗ ERROR")
+			status = text.Colors{f.theme.Error}.Sprint("✗ ERROR")
 			daysLeft = text.Colors{text.Faint}.Sprint("N/A")
 			expires = text.Colors{text.Faint}.Sprint("N/A")
-			issuer = text.Colors{text.FgHiRed, text.Faint}.Sprint(cert.Error.Error())
+			issuer = text.Colors{f.theme.Error, text.Faint}.Sprint(cert.Error.Error())
 		}
 
 		t.AppendRow(table.Row{
@@ -64,22 +76,22 @@ func (f *TableFormatter) Format(report *models.CertificateReport) error {
 
 	// Add summary with colors
 	summary := fmt.Sprintf("%s %d  │  %s %d  │  %s %d  │  %s %d  │  %s %d",
-		text.Colors{text.FgHiCyan}.Sprint("Total:"),
+		text.Colors{f.theme.Info}.Sprint("Total:"),
 		report.TotalDomains,
-		text.Colors{text.FgHiRed}.Sprint("Expired:"),
+		text.Colors{f.theme.Expired}.Sprint("Expired:"),
 		report.Summary.Expired,
-		text.Colors{text.FgHiYellow}.Sprint("Warning:"),
+		text.Colors{f.theme.Warning}.Sprint("Warning:"),
 		report.Summary.Warning,
-		text.Colors{text.FgHiGreen}.Sprint("OK:"),
+		text.Colors{f.theme.OK}.Sprint("OK:"),
 		report.Summary.OK,
-		text.Colors{text.FgHiMagenta}.Sprint("Error:"),
+		text.Colors{f.theme.Status}.Sprint("Error:"),
 		report.Summary.Error,
 	)
 
-	t.AppendFooter(table.Row{text.Colors{text.FgHiCyan, text.Bold}.Sprint("Summary"), summary, "", "", ""})
+	t.AppendFooter(table.Row{text.Colors{f.theme.Title, text.Bold}.Sprint("Summary"), summary, "", "", ""})
 
-	// Apply custom Catppuccin-inspired style
-	t.SetStyle(f.catppuccinStyle())
+	// Apply custom theme style
+	t.SetStyle(f.themeStyle())
 	t.Style().Options.SeparateRows = false // No background colors between rows
 
 	t.Render()
@@ -87,25 +99,25 @@ func (f *TableFormatter) Format(report *models.CertificateReport) error {
 	return nil
 }
 
-// formatStatus formats the status with emoji and colors (Catppuccin-inspired)
+// formatStatus formats the status with emoji and colors
 func (f *TableFormatter) formatStatus(status models.CertificateStatus) string {
 	switch status {
 	case models.StatusExpired:
-		return text.Colors{text.FgHiRed, text.Bold}.Sprint("✗ EXPIRED")
+		return text.Colors{f.theme.Expired, text.Bold}.Sprint("✗ EXPIRED")
 	case models.StatusWarning:
-		return text.Colors{text.FgHiYellow, text.Bold}.Sprint("⚠ WARN")
+		return text.Colors{f.theme.Warning, text.Bold}.Sprint("⚠ WARN")
 	case models.StatusOK:
-		return text.Colors{text.FgHiGreen, text.Bold}.Sprint("✓ OK")
+		return text.Colors{f.theme.OK, text.Bold}.Sprint("✓ OK")
 	case models.StatusError:
-		return text.Colors{text.FgHiRed, text.Bold}.Sprint("✗ ERROR")
+		return text.Colors{f.theme.Error, text.Bold}.Sprint("✗ ERROR")
 	default:
-		return text.Colors{text.FgHiMagenta}.Sprint("? UNKNOWN")
+		return text.Colors{f.theme.Status}.Sprint("? UNKNOWN")
 	}
 }
 
 // formatDomain formats the domain name
 func (f *TableFormatter) formatDomain(domain string) string {
-	return text.Colors{text.FgHiWhite}.Sprint(domain)
+	return text.Colors{f.theme.Domain}.Sprint(domain)
 }
 
 // formatDaysLeft formats days left with color coding
@@ -113,11 +125,11 @@ func (f *TableFormatter) formatDaysLeft(days int, status models.CertificateStatu
 	daysStr := fmt.Sprintf("%d", days)
 	switch status {
 	case models.StatusExpired:
-		return text.Colors{text.FgHiRed}.Sprint(daysStr)
+		return text.Colors{f.theme.Expired}.Sprint(daysStr)
 	case models.StatusWarning:
-		return text.Colors{text.FgHiYellow}.Sprint(daysStr)
+		return text.Colors{f.theme.Warning}.Sprint(daysStr)
 	case models.StatusOK:
-		return text.Colors{text.FgHiGreen}.Sprint(daysStr)
+		return text.Colors{f.theme.OK}.Sprint(daysStr)
 	default:
 		return daysStr
 	}
@@ -128,10 +140,10 @@ func (f *TableFormatter) formatIssuer(issuer string) string {
 	return text.Colors{text.Faint}.Sprint(issuer)
 }
 
-// catppuccinStyle returns a custom table style inspired by Catppuccin theme
-func (f *TableFormatter) catppuccinStyle() table.Style {
+// themeStyle returns a custom table style based on the selected theme
+func (f *TableFormatter) themeStyle() table.Style {
 	return table.Style{
-		Name: "CatppuccinStyle",
+		Name: "ThemeStyle",
 		Box: table.BoxStyle{
 			BottomLeft:       "╰",
 			BottomRight:      "╯",
@@ -151,9 +163,9 @@ func (f *TableFormatter) catppuccinStyle() table.Style {
 			UnfinishedRow:    "…",
 		},
 		Color: table.ColorOptions{
-			Header: text.Colors{text.FgHiCyan, text.Bold},
-			Border: text.Colors{text.FgHiBlack},
-			Footer: text.Colors{text.FgHiCyan},
+			Header: text.Colors{f.theme.Title, text.Bold},
+			Border: text.Colors{f.theme.Border},
+			Footer: text.Colors{f.theme.Info},
 		},
 		Format: table.FormatOptions{
 			Header: text.FormatDefault,
@@ -169,7 +181,7 @@ func (f *TableFormatter) catppuccinStyle() table.Style {
 		},
 		Title: table.TitleOptions{
 			Align:  text.AlignCenter,
-			Colors: text.Colors{text.FgHiCyan, text.Bold},
+			Colors: text.Colors{f.theme.Title, text.Bold},
 			Format: text.FormatDefault,
 		},
 	}
