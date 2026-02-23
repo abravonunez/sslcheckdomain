@@ -14,6 +14,7 @@ import (
 	"sslcheckdomain/internal/output"
 	"sslcheckdomain/internal/provider"
 	"sslcheckdomain/internal/provider/cloudflare"
+	"sslcheckdomain/internal/themes"
 	"sslcheckdomain/pkg/models"
 )
 
@@ -164,12 +165,16 @@ func run(cmd *cobra.Command, args []string) error {
 	// Create context
 	ctx := context.Background()
 
+	// Get the theme for styling
+	theme := themes.GetTheme(cfg.Theme)
+
 	// Get domains to check
 	var domains []string
 	if !cfg.Verbose && testDomainFlag == "" {
 		// Show spinner only if not in verbose mode and not testing a single domain
-		s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
+		s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
 		s.Suffix = " Fetching domains from provider..."
+		s.Color(theme.SpinnerColor1, "bold")
 		s.Start()
 		domains, err = getDomains(ctx, cfg)
 		s.Stop()
@@ -199,8 +204,9 @@ func run(cmd *cobra.Command, args []string) error {
 	var certificates []models.Certificate
 	if !cfg.Verbose {
 		// Show spinner only if not in verbose mode
-		s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
+		s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
 		s.Suffix = fmt.Sprintf(" Checking SSL certificates for %d domains...", len(domains))
+		s.Color(theme.SpinnerColor2, "bold")
 		s.Start()
 		certificates, err = sslChecker.CheckDomains(ctx, domains, cfg.Threshold)
 		s.Stop()
@@ -236,7 +242,7 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 
 	// Format and display output
-	formatter, err := output.GetFormatter(cfg.Output)
+	formatter, err := output.GetFormatter(cfg.Output, cfg.Theme)
 	if err != nil {
 		return fmt.Errorf("failed to create formatter: %w", err)
 	}
