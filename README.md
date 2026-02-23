@@ -193,7 +193,38 @@ timeout: 10
 concurrent: 15
 threshold: 30
 output: table
+theme: catppuccin-mocha
 ```
+
+### Color Themes
+
+`sslcheckdomain` supports multiple color themes for better visual experience:
+
+**Available themes:**
+- `catppuccin-mocha` (default) - Soothing pastel theme
+- `nord` - Arctic, north-bluish color palette
+- `tokyo-night` - A dark theme inspired by Tokyo's night
+- `gruvbox` - Retro groove color scheme
+- `classic` - Traditional terminal colors
+- `dracula` - Dark theme with vibrant colors
+
+**Set theme via environment variable:**
+```bash
+export SSLCHECK_THEME=nord
+sslcheckdomain
+```
+
+**Set theme via config file:**
+```yaml
+# ~/.config/sslcheckdomain.yaml or ./sslcheckdomain.yaml
+theme: tokyo-night
+```
+
+Themes affect:
+- Table colors and borders
+- Status indicators (OK, WARNING, EXPIRED)
+- Spinner animations
+- Summary statistics
 
 ## Output Examples
 

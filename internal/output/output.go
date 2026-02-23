@@ -12,10 +12,10 @@ type Formatter interface {
 }
 
 // GetFormatter returns the appropriate formatter based on format string
-func GetFormatter(format string) (Formatter, error) {
+func GetFormatter(format string, themeName string) (Formatter, error) {
 	switch format {
 	case "table":
-		return NewTableFormatter(), nil
+		return NewTableFormatterWithTheme(themeName), nil
 	case "json":
 		return NewJSONFormatter(), nil
 	case "prometheus":

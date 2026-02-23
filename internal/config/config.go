@@ -27,6 +27,7 @@ type Config struct {
 	Threshold  int
 	Output     string
 	Verbose    bool
+	Theme      string
 
 	// Filter settings
 	Zone        string
@@ -44,6 +45,7 @@ func Load() (*Config, error) {
 	viper.SetDefault("output", "table")
 	viper.SetDefault("provider", "cloudflare")
 	viper.SetDefault("aws_region", "us-east-1")
+	viper.SetDefault("theme", "catppuccin-mocha")
 
 	// Bind environment variables
 	viper.SetEnvPrefix("SSL_CHECK")
@@ -57,6 +59,7 @@ func Load() (*Config, error) {
 	viper.BindEnv("aws_access_key_id", "AWS_ACCESS_KEY_ID")
 	viper.BindEnv("aws_secret_access_key", "AWS_SECRET_ACCESS_KEY")
 	viper.BindEnv("aws_region", "AWS_REGION")
+	viper.BindEnv("theme", "SSLCHECK_THEME")
 
 	// Try to load config file from multiple locations
 	viper.SetConfigName("sslcheckdomain")
@@ -93,6 +96,7 @@ func Load() (*Config, error) {
 		Concurrent:          viper.GetInt("concurrent"),
 		Threshold:           viper.GetInt("threshold"),
 		Output:              viper.GetString("output"),
+		Theme:               viper.GetString("theme"),
 	}
 
 	return cfg, nil

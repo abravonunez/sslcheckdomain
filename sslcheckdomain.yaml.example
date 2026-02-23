@@ -15,3 +15,7 @@ threshold: 30
 
 # Output format (table, json, prometheus)
 output: table
+
+# Color theme (catppuccin-mocha, nord, tokyo-night, gruvbox, classic, dracula)
+# Can also be set via SSLCHECK_THEME environment variable
+theme: catppuccin-mocha
