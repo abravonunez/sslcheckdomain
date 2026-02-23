@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/abravonunez/sslcheckdomain/compare/v1.3.0...v1.3.1) (2026-02-23)
+
+
+### Bug Fixes
+
+* auto-trigger GoReleaser on release creation ([#11](https://github.com/abravonunez/sslcheckdomain/issues/11)) ([86e3358](https://github.com/abravonunez/sslcheckdomain/commit/86e33588eb1b18eff6ff06b08e72fd6214e1abc5))
+
 ## [1.3.0](https://github.com/abravonunez/sslcheckdomain/compare/v1.2.1...v1.3.0) (2026-02-23)
 
 
