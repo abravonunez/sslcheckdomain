@@ -10,7 +10,8 @@ set -euo pipefail
 SSLCHECK_BIN="/usr/local/bin/sslcheckdomain"
 LOG_DIR="/var/log/sslcheck"
 ALERT_WEBHOOK="https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
-EXPIRING_THRESHOLD=7
+# shellcheck disable=SC2034
+EXPIRING_THRESHOLD=7  # Reserved for future use with --expiring-in flag
 
 # Create log directory if it doesn't exist
 mkdir -p "${LOG_DIR}"

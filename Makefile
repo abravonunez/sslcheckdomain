@@ -1,4 +1,4 @@
-.PHONY: help build build-all test lint clean install run
+.PHONY: help build build-all test lint clean install run pre-commit-install pre-commit-run
 
 # Variables
 BINARY_NAME=sslcheckdomain
@@ -133,6 +133,22 @@ deps-update: ## Update dependencies
 	@echo "Updating dependencies..."
 	$(GOGET) -u ./...
 	$(GOMOD) tidy
+
+pre-commit-install: ## Install pre-commit hooks
+	@echo "Installing pre-commit hooks..."
+	@which pre-commit > /dev/null || (echo "pre-commit not found. Install: pip install pre-commit" && exit 1)
+	pre-commit install
+	@echo "Pre-commit hooks installed"
+
+pre-commit-run: ## Run pre-commit on all files
+	@echo "Running pre-commit on all files..."
+	@which pre-commit > /dev/null || (echo "pre-commit not found. Install: pip install pre-commit" && exit 1)
+	pre-commit run --all-files
+
+pre-commit-update: ## Update pre-commit hooks
+	@echo "Updating pre-commit hooks..."
+	@which pre-commit > /dev/null || (echo "pre-commit not found. Install: pip install pre-commit" && exit 1)
+	pre-commit autoupdate
 
 check: fmt vet lint test ## Run all checks
 
