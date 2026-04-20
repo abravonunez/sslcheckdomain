@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.0](https://github.com/abravonunez/sslcheckdomain/compare/v1.3.1...v1.4.0) (2026-04-20)
+
+
+### Features
+
+* **debug:** add detailed verbose logging for SSL connectivity troubleshooting ([#14](https://github.com/abravonunez/sslcheckdomain/issues/14)) ([5a1da60](https://github.com/abravonunez/sslcheckdomain/commit/5a1da600de82421bee38bdc28fc2323f0440ae19))
+
+
+### Bug Fixes
+
+* **ci:** prevent duplicate GoReleaser workflow runs ([#13](https://github.com/abravonunez/sslcheckdomain/issues/13)) ([16253dd](https://github.com/abravonunez/sslcheckdomain/commit/16253dd5d558be4e496e3eaa5bfe11e96d1c267e))
+
 ## [1.3.1](https://github.com/abravonunez/sslcheckdomain/compare/v1.3.0...v1.3.1) (2026-02-23)
 
 
