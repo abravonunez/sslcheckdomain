@@ -197,8 +197,10 @@ func run(cmd *cobra.Command, args []string) error {
 	// Check SSL certificates
 	sslChecker := checker.New(time.Duration(cfg.Timeout)*time.Second, cfg.Concurrent)
 
+	// Enable verbose logging if requested
 	if cfg.Verbose {
-		fmt.Fprintf(os.Stderr, "Checking SSL certificates...\n")
+		sslChecker.WithVerbose(true, os.Stderr)
+		fmt.Fprintf(os.Stderr, "Checking SSL certificates with detailed logging...\n")
 	}
 
 	var certificates []models.Certificate
